@@ -1,1 +1,2 @@
-config/dbConfig.php
+config/DBConfig.php
+config/Environment.php
