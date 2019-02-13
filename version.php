@@ -15,7 +15,9 @@
     $sql = "select * from version where id=(select max(id) from version where environment='" . $env->getEnvironment() . "');";
     $result = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     $json['status'] = count($result);
-    $json['info'] = $result;
+    if(count($result) == 1){
+    	$json['info'] = $result[0];
+    }
 
     echo json_encode($json,JSON_UNESCAPED_UNICODE);
  ?>
