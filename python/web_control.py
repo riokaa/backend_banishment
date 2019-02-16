@@ -1,8 +1,7 @@
+import datetime
 import json
 import requests
 import time
-from datetime import date
-from datetime import datetime
 from log import Log
 from selenium import webdriver
 from settings import *
@@ -32,31 +31,33 @@ class WebControl(object):
         # 获取日期在今天的前面几天
         # timestr:'%Y-%m-%d %H:%M:%S'
         # return:日数差,不考虑时间
-        now_time = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        date = datetime.strptime(timestr, '%Y-%m-%d %H:%M:%S')  #按格式转换
-        date = date.replace(hour=0, minute=0, second=0, microsecond=0)
+        now_time = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        date = datetime.datetime.strptime(timestr, '%Y-%m-%d %H:%M:%S')  #按格式转换
+        date = date.replace(hour=0, minute=0, second=0, microsecond=0)  #这里的date是变量
         return (now_time - date).days
 
     def get_detail_json_by_title(self, item):
         # 在当前页面根据title打开页面并获取页面url/insertTime/title然后关闭
         # return:页面detail json
-        ret = json.dump({
-            'time': item['insertTime'],
-            'title': item['itemTitle']
-        })
         title = item['itemTitle']
         title = ''.join(title.split())
         elements = self.driver.find_elements_by_tag_name('a')
-        for i in elements:
+        for i in elements:  #判断每个a元素内部内容是否与title相同
             if(''.join(i.get_attribute('text').split()) == title):
                 i.click()
                 break
         self.driver.switch_to_window(self.driver.window_handles[-1])  #切到新打开的页面
         self.wait_for_loading()
-        ret['url'] = self.driver.current_url
-        Log.i('获取到标题为' + ret['title'] + '的视频页面url: ' + ret['url'])
+        cur_url = self.driver.current_url
+        Log.i('获取到标题为' + item['itemTitle'] + '的视频页面url: ' + cur_url)
         self.driver.close()  #关闭页面
         self.wait_for_loading()
+        self.driver.switch_to_window(self.driver.window_handles[0])  #切回页面
+        ret = {
+            'time': item['insertTime'],
+            'title': item['itemTitle'],
+            'url': cur_url,
+        }
         return ret
 
     def get_json(self, url):
@@ -78,12 +79,8 @@ class WebControl(object):
         return False
 
     def wait_for_loading(self):
-        time.sleep(2)
+        time.sleep(1)
 
 if __name__ == "__main__":
     t = WebControl()
     t.browser_chrome_init()
-    t.display_local_vdo_website('zhejiang')
-    json = t.get_vdo_json('zhejiang')
-    t.is_time_valid(json['items'][0])
-    t.get_url_by_title(json['items'][0]['itemTitle'])

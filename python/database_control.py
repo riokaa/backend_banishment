@@ -8,8 +8,8 @@ class DBControl(object):
 
     def _connect(self):
         # 链接数据库
-        #self.db = MySQLdb.connect(host=DB_ADRESS, db=DB_NAME, user=DB_USERNAME, password=DB_PASSWORD, charset='utf8')
-        self.db = MySQLdb.connect(host=DB_ADRESS, db=DB_NAME, user='temp', password='123456', charset='utf8')
+        self.db = MySQLdb.connect(host=DB_ADRESS, db=DB_NAME, user=DB_USERNAME, password=DB_PASSWORD, charset='utf8')
+        #self.db = MySQLdb.connect(host=DB_ADRESS, db=DB_NAME, user='temp', password='123456', charset='utf8')
         # 使用cursor()方法获取操作游标
         self.cursor = self.db.cursor()
 
@@ -42,4 +42,3 @@ class DBControl(object):
 
 if __name__ == '__main__':
     db = DBControl()
-    
