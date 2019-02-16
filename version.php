@@ -16,7 +16,10 @@
     $result = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     $json['status'] = count($result);
     if(count($result) == 1){
+    	$json['message'] = 'ok';
     	$json['info'] = $result[0];
+    }else{
+    	$json['message'] = 'error';
     }
 
     echo json_encode($json,JSON_UNESCAPED_UNICODE);

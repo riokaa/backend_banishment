@@ -1,3 +1,5 @@
 config/DBConfig.php
 config/Environment.php
 *.log
+__pycache__
+settings.py
