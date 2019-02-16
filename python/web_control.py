@@ -37,9 +37,14 @@ class WebControl(object):
         date = date.replace(hour=0, minute=0, second=0, microsecond=0)
         return (now_time - date).days
 
-    def get_url_by_title(self, title):
-        # 在当前页面根据title打开页面并获取页面url然后关闭
-        # return:页面url
+    def get_detail_json_by_title(self, item):
+        # 在当前页面根据title打开页面并获取页面url/insertTime/title然后关闭
+        # return:页面detail json
+        ret = json.dump({
+            'time': item['insertTime'],
+            'title': item['itemTitle']
+        })
+        title = item['itemTitle']
         title = ''.join(title.split())
         elements = self.driver.find_elements_by_tag_name('a')
         for i in elements:
@@ -48,11 +53,11 @@ class WebControl(object):
                 break
         self.driver.switch_to_window(self.driver.window_handles[-1])  #切到新打开的页面
         self.wait_for_loading()
-        cur_url = self.driver.current_url
-        Log.i('获取到标题为' + title + '的视频页面url: ' + cur_url)
+        ret['url'] = self.driver.current_url
+        Log.i('获取到标题为' + ret['title'] + '的视频页面url: ' + ret['url'])
         self.driver.close()  #关闭页面
         self.wait_for_loading()
-        return cur_url
+        return ret
 
     def get_json(self, url):
         # 获取json数据并返回
@@ -65,9 +70,9 @@ class WebControl(object):
     def go(self, url):
         return self.driver.get(url)
 
-    def is_time_valid(self, json_item):
+    def is_time_valid(self, json_item_time):
         # 判断文章视频json_item项的时间是否合法(仅搜索昨天和今天的新闻,昨天的给明天用户用)
-        delt_time = self.get_delt_date_before_today(json_item['insertTime'])
+        delt_time = self.get_delt_date_before_today(json_item_time)
         if delt_time == 0 or delt_time == 1:
             return True
         return False

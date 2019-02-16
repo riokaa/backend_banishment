@@ -4,12 +4,14 @@ from settings import *
 
 class DBControl(object):
     def __init__(self):
+        pass
 
     def _connect(self):
         # 链接数据库
-        self.db = MySQLdb.connect(DB_ADRESS, DB_NAME, DB_USERNAME, DB_PASSWORD, charset='utf8')
+        #self.db = MySQLdb.connect(host=DB_ADRESS, db=DB_NAME, user=DB_USERNAME, password=DB_PASSWORD, charset='utf8')
+        self.db = MySQLdb.connect(host=DB_ADRESS, db=DB_NAME, user='temp', password='123456', charset='utf8')
         # 使用cursor()方法获取操作游标
-        self.cursor = db.cursor()
+        self.cursor = self.db.cursor()
 
     def search(self, sql):
         # select操作使用
@@ -37,3 +39,7 @@ class DBControl(object):
             Log.e('数据库执行异常,执行语句: ' + sql)
         finally:
             self.db.close()
+
+if __name__ == '__main__':
+    db = DBControl()
+    
