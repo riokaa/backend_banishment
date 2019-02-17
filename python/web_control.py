@@ -21,7 +21,7 @@ class WebControl(object):
         # chrome配置
         Log.i('Chrome浏览器创建中....')
         options = webdriver.ChromeOptions()
-        #options.add_argument('--headless')
+        options.add_argument('--headless')
         options.add_argument('--disable-gpu')
         options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
         options._binary_location = CHROME_LOCATION
