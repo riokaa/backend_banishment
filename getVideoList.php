@@ -1,7 +1,7 @@
 <?php
     require 'config/DBConfig.php';
     require 'config/Environment.php';
-
+    
     header('Content-Type:application/json');
     $db = new DBConfig();
     $env = new Environment();
@@ -12,15 +12,16 @@
     } catch(PDOException $e) {
         echo "conn_error:<br/>" . $e -> getMessage();
     }
-    $sql = "select * from version where id=(select max(id) from version where environment='" . $env->getEnvironment() . "');";
+    $sql = "select * from video_list where date='" + date("Y-m-d", strtotime("-2 day")) + ";";
     $result = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-    $json['status'] = count($result);
-    if(count($result) == 1){
+    if(count($result) > 0){
+        $json['status'] = 1;
         $json['message'] = 'ok';
-        $json['info'] = $result[0];
+        $json['data'] = $result;
     }else{
+        $json['status'] = 0;
         $json['message'] = 'error';
     }
 
     echo json_encode($json,JSON_UNESCAPED_UNICODE);
- ?>
+?>
