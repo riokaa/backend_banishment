@@ -1,7 +1,7 @@
 <?php
     require 'config/DBConfig.php';
     require 'config/Environment.php';
-    
+    ini_set('date.timezone','Asia/Shanghai');
     header('Content-Type:application/json');
     $db = new DBConfig();
     $env = new Environment();
@@ -12,7 +12,7 @@
     } catch(PDOException $e) {
         echo "conn_error:<br/>" . $e -> getMessage();
     }
-    $sql = "select * from video_list where date='" + date("Y-m-d", strtotime("-2 day")) + ";";
+    $sql = "select * from video_list where date='" . date("Y-m-d", strtotime("-2 day")) . "' limit 20;";
     $result = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     if(count($result) > 0){
         $json['status'] = 1;
