@@ -48,9 +48,11 @@ class WebControl(object):
                 break
         self.driver.switch_to_window(self.driver.window_handles[-1])  #切到新打开的页面
         self.wait_for_loading()
+        self.wait_for_loading()
         cur_url = self.driver.current_url
         Log.i('获取到标题为' + item['itemTitle'] + '的视频页面url: ' + cur_url)
         self.driver.close()  #关闭页面
+        self.wait_for_loading()
         self.wait_for_loading()
         self.driver.switch_to_window(self.driver.window_handles[0])  #切回页面
         ret = {
@@ -79,7 +81,7 @@ class WebControl(object):
         return False
 
     def wait_for_loading(self):
-        time.sleep(1)
+        time.sleep(2)
 
 if __name__ == "__main__":
     t = WebControl()
