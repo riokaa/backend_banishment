@@ -19,6 +19,8 @@ class VideoUrlGet(object):
     def _data_to_db(self, data):
         # 将data数据录入数据库,判为重则return false否则return true
         # data:json<time, title, url>
+        if len(data) < 3:
+            return False
         time = data['time']
         title = data['title']
         url = data['url']

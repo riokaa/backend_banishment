@@ -42,17 +42,20 @@ class WebControl(object):
         title = item['itemTitle']
         title = ''.join(title.split())
         elements = self.driver.find_elements_by_tag_name('a')
+        #Log.d('当前title:' + title[0:18])
         for i in elements:  #判断每个a元素内部内容是否与title相同
-            if(''.join(i.get_attribute('text').split()) == title):
+            #Log.d('当前元素内容：' + ''.join(i.get_attribute('text').split()))
+            if ''.join(i.get_attribute('text').split())[0:18] == title[0:18]:  # 长度超过20多就会变点点点,因此只比对前19位
                 i.click()
                 break
+        # 如果没有点击到是不能继续执行的
+        if len(self.driver.window_handles) == 1:
+            return {}
         self.driver.switch_to_window(self.driver.window_handles[-1])  #切到新打开的页面
-        self.wait_for_loading()
         self.wait_for_loading()
         cur_url = self.driver.current_url
         Log.i('获取到标题为' + item['itemTitle'] + '的视频页面url: ' + cur_url)
         self.driver.close()  #关闭页面
-        self.wait_for_loading()
         self.wait_for_loading()
         self.driver.switch_to_window(self.driver.window_handles[0])  #切回页面
         ret = {
@@ -81,7 +84,7 @@ class WebControl(object):
         return False
 
     def wait_for_loading(self):
-        time.sleep(2)
+        time.sleep(1)
 
 if __name__ == "__main__":
     t = WebControl()
