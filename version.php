@@ -18,6 +18,7 @@
     if(count($result) == 1){
         $json['message'] = 'ok';
         $json['info'] = $result[0];
+        $json['data'] = $result[0];
     }else{
         $json['message'] = 'error';
     }
