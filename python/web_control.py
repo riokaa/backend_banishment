@@ -4,12 +4,17 @@ import requests
 import time
 from log import Log
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 from settings import *
 
 # chrome版本与webdriver对应表
 # https://blog.csdn.net/huilan_same/article/details/51896672
+# selenium常用方法
+# https://blog.csdn.net/xie_0723/article/details/51437650
 # apis
-# https://blog.csdn.net/u010986776/article/details/79266448#
+# https://blog.csdn.net/u010986776/article/details/79266448
 
 class WebControl(object):
     # 浏览器控制类
@@ -46,7 +51,12 @@ class WebControl(object):
         for i in elements:  #判断每个a元素内部内容是否与title相同
             #Log.d('当前元素内容：' + ''.join(i.get_attribute('text').split()))
             if ''.join(i.get_attribute('text').split())[0:18] == title[0:18]:  # 长度超过20多就会变点点点,因此只比对前19位
-                i.click()
+                try:
+                    WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.PARTIAL_LINK_TEXT, title[0:18])),"Not Find element")
+                    i.click()
+                except Exception as e:
+                    raise e
+                    return {}
                 break
         # 如果没有点击到是不能继续执行的
         if len(self.driver.window_handles) == 1:
