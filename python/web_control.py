@@ -52,10 +52,10 @@ class WebControl(object):
             #Log.d('当前元素内容：' + ''.join(i.get_attribute('text').split()))
             if ''.join(i.get_attribute('text').split())[0:18] == title[0:18]:  # 长度超过20多就会变点点点,因此只比对前19位
                 try:
-                    WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.PARTIAL_LINK_TEXT, title[0:18])),"Not Find element")
+                    WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable((By.PARTIAL_LINK_TEXT, title[0:18])),"Not Find element")
                     i.click()
                 except Exception as e:
-                    raise e
+                    #raise e
                     return {}
                 break
         # 如果没有点击到是不能继续执行的
