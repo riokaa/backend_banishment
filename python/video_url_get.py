@@ -14,7 +14,6 @@ class VideoUrlGet(object):
         self._local_url_define()  #初始化url表
         self.db = DBControl()  #初始化数据库控制器
         self.web = WebControl()  #初始化浏览器控制器
-        self.web.browser_chrome_init()
 
     def _data_to_db(self, data):
         # 将data数据录入数据库,判为重则return false否则return true
@@ -126,7 +125,9 @@ class VideoUrlGet(object):
         # 开始获取视频站视频链接
         while True:
             # 获取数据并录入数据库
+            self.web.browser_chrome_init()
             self._get_details()
+            self.web.browser_quit()
             # 然后清理老数据 TODO
 
             # 最后睡觉
