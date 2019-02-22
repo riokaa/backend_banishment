@@ -15,6 +15,18 @@ class VideoUrlGet(object):
         self.db = DBControl()  #初始化数据库控制器
         self.web = WebControl()  #初始化浏览器控制器
 
+    def _clean_old_data(self):
+        # 清理数据库中过旧数据
+        HOW_LONG_IS_OLD = 14  # 多久才算旧数据？单位：天
+        LONG_LONG_AGO = '1970-01-01'
+        today = datetime.date.today()
+        oldday = today - datetime.timedelta(days=HOW_LONG_IS_OLD)
+        Log.i('清除' + str(oldday) + '之前的视频数据中....')
+        sql = "delete from video_list where date(date) between '" + LONG_LONG_AGO + "' and '" + str(oldday) + "';"
+        self.db.execute(sql)
+        Log.i('清除完毕.')
+        return True
+
     def _data_to_db(self, data):
         # 将data数据录入数据库,判为重则return false否则return true
         # data:json<time, title, url>
@@ -142,12 +154,12 @@ class VideoUrlGet(object):
     def start(self):
         # 开始获取视频站视频链接
         while True:
-            # 获取数据并录入数据库
+            # 先清理老数据
+            self._clean_old_data()
+            # 然后获取数据并录入数据库
             self.web.browser_chrome_init()
             self._get_details()
             self.web.browser_quit()
-            # 然后清理老数据 TODO
-
             # 最后睡觉
             Log.i('休眠中....')
             time.sleep(6 * 60 * 60)
