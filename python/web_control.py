@@ -32,6 +32,9 @@ class WebControl(object):
         options._binary_location = CHROME_LOCATION
         self.driver = webdriver.Chrome(chrome_options=options)
 
+    def browser_quit(self):
+        self.driver.quit()
+
     def get_delt_date_before_today(self, timestr):
         # 获取日期在今天的前面几天
         # timestr:'%Y-%m-%d %H:%M:%S'
