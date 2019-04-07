@@ -3,3 +3,4 @@ config/Environment.php
 *.log
 __pycache__
 settings.py
+update
