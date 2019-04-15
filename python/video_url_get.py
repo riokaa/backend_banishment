@@ -42,29 +42,17 @@ class VideoUrlGet(object):
         if res[0][0] > 0:  #有重了
             Log.i('Url已存在数据库.')
             return False
-        # 才能录入
-        sql = 'insert into video_list (date, title, url) values (\'' + date + '\',\'' + title + '\',\'' + url + '\')'
+        # 插入的日期选定
+        res = self.db.search('select max(date) from video_list')
+        maxDate = res[0][0]
+        res = self.db.search('select count(*) from video_list where date=\'' + str(maxDate) + '\'')
+        if(res[0][0] >= 9):
+            Log.i(str(maxDate) + '的视频已准备充分: ' + str(res[0][0]) + '条.')
+            maxDate = maxDate + datetime.timedelta(days=1)
+        # 插入数据
+        sql = 'insert into video_list (date, title, url) values (\'' + str(maxDate) + '\',\'' + title + '\',\'' + url + '\')'
         self.db.execute(sql)
         return True
-
-    def _datas_to_db(self, datas):
-        # 将datas数据录入数据库,注意判重
-        # datas:list<json<time, title, url>>
-        Log.d('datas:' + str(datas))
-        for i in datas:
-            time = i['time']
-            title = i['title']
-            url = i['url']
-            date = time.split()[0]
-            # 判重
-            sql = 'select count(*) from video_list where url=\'' + url + '\''
-            res = self.db.search(sql)
-            if res[0][0] > 0:  #有重了
-                Log.i('Url已存在数据库.')
-                continue
-            # 才能录入
-            sql = 'insert into video_list (date, title, url) values (\'' + date + '\',\'' + title + '\',\'' + url + '\')'
-            self.db.execute(sql)
 
     def _display_local_vdo_website(self, place):
         # 在浏览器中显示地方视频站点
@@ -76,7 +64,8 @@ class VideoUrlGet(object):
         # 获取每个地方视频站视频的包含url在内的详情并存入数据库
         # datas: list<json<time, title, url>>
         for key in self._url.keys():
-            if self._have_enough_url_yesterday():
+            # if self._have_enough_url_yesterday():
+            if self._have_enough_url_this_month():
                 Log.i('库存充足,继续睡觉.')
                 break
             Log.i('没有足够库存,开始搜罗数据.')
@@ -94,7 +83,6 @@ class VideoUrlGet(object):
                             break
                 else:  #日期过旧
                     break
-            #self._datas_to_db(datas)
 
     def _get_vdo_json(self, place):
         # 获取视频集json数据并返回
@@ -105,8 +93,19 @@ class VideoUrlGet(object):
         json = self.web.get_json(self._json_url[place] + '?' + str(timestamp))
         return json
 
+    def _have_enough_url_this_month(self):
+        # 查库判断是否有足够的本月视频链接库存
+        today = datetime.date.today()
+        oneMonthLater = today + datetime.timedelta(days=30)
+        res = self.db.search('select max(date) from video_list')
+        deltDays = (res[0][0] - today).days
+        Log.i('数据库中最大日期:' + str(res[0][0]) + ' 距今日天数:' + str(deltDays))
+        if deltDays >= 30:
+            return True
+        return False
+
     def _have_enough_url_yesterday(self):
-        # 查库判断是否有足够的昨日视频链接库存
+        # 查库判断是否有足够的昨日视频链接库存（已弃用）
         ITEM_LIMIT = 20  #限制视频链接封顶库存数量
         today = datetime.date.today()
         yesterday = today - datetime.timedelta(days=1)
