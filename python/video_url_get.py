@@ -45,8 +45,12 @@ class VideoUrlGet(object):
         # 插入的日期选定
         res = self.db.search('select max(date) from video_list')
         maxDate = res[0][0]
+        today = datetime.date.today()
+        yesterday = today - datetime.timedelta(days=1)
+        if (maxDate - yesterday).days < 0:
+            maxDate = yesterday
         res = self.db.search('select count(*) from video_list where date=\'' + str(maxDate) + '\'')
-        if(res[0][0] >= 9):
+        if(res[0][0] >= 8):
             Log.i(str(maxDate) + '的视频已准备充分: ' + str(res[0][0]) + '条.')
             maxDate = maxDate + datetime.timedelta(days=1)
         # 插入数据
